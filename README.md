@@ -1,3 +1,7 @@
 # swift-vaillant-multimatic
 
-A description of this package.
+TODO:
+- [ ] Reauthenticate in case of authentication error
+
+DONE: 
+- [x] Cookies saving with expirity date

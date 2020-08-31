@@ -1,28 +1,68 @@
 // swift-tools-version:5.3
-// The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
 
 let package = Package(
-    name: "swift-vaillant-multimatic",
-    products: [
-        // Products define the executables and libraries a package produces, and make them visible to other packages.
-        .library(
-            name: "swift-vaillant-multimatic",
-            targets: ["swift-vaillant-multimatic"]),
-    ],
-    dependencies: [
-        // Dependencies declare other packages that this package depends on.
-        // .package(url: /* package url */, from: "1.0.0"),
-    ],
-    targets: [
-        // Targets are the basic building blocks of a package. A target can define a module or a test suite.
-        // Targets can depend on other targets in this package, and on products in packages this package depends on.
-        .target(
-            name: "swift-vaillant-multimatic",
-            dependencies: []),
-        .testTarget(
-            name: "swift-vaillant-multimaticTests",
-            dependencies: ["swift-vaillant-multimatic"]),
-    ]
+  name: "swift-vaillant-multimatic",
+  platforms: [
+      .macOS(.v11),
+      .iOS(.v14),
+      .tvOS(.v14),
+  ],
+  products: [
+    .executable(
+      name: "VaillantMultimaticCli",
+      targets: ["VaillantMultimaticCli"]
+    ),
+    .library(
+      name: "VaillantMultimatic",
+      targets: ["VaillantMultimatic"]
+    ),
+  ],
+  dependencies: [
+    .package(url: "https://github.com/S2Ler/Networker.git", .branch("master")),
+    .package(url: "https://github.com/S2Ler/Preferences.git", .upToNextMinor(from: "0.3.0")),
+    .package(url: "https://github.com/apple/swift-argument-parser.git", .upToNextMinor(from: "0.3.0")),
+    .package(url: "https://github.com/apple/swift-se-0282-experimental.git", .branch("master")),
+  ],
+  targets: [
+    .target(
+      name: "VaillantMultimaticCli",
+      dependencies: [
+        "VaillantMultimaticApi",
+        "VaillantMultimaticFoundation",
+        .product(name: "Networker", package: "Networker"),
+        .product(name: "ArgumentParser", package: "swift-argument-parser"),
+        .product(name: "SE0282_Experimental", package: "swift-se-0282-experimental")
+      ]
+    ),
+    .target(
+      name: "VaillantMultimatic",
+      dependencies: [
+        "VaillantMultimaticApi",
+        "VaillantMultimaticFoundation",
+      ]
+    ),
+    .target(
+      name: "VaillantMultimaticApi",
+      dependencies: [
+        "VaillantMultimaticFoundation",
+        .product(name: "Networker", package: "Networker"),
+        .product(name: "Preferences", package: "Preferences"),
+      ]
+    ),
+    .target(
+      name: "VaillantMultimaticFoundation",
+      dependencies: [
+        .product(name: "Networker", package: "Networker"),
+        .product(name: "Preferences", package: "Preferences"),
+      ]
+    ),
+    .testTarget(
+      name: "VaillantMultimaticApiTests",
+      dependencies: [
+        "VaillantMultimaticApi",
+      ]
+    )
+  ]
 )
