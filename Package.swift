@@ -20,10 +20,10 @@ let package = Package(
     ),
   ],
   dependencies: [
-    .package(url: "https://github.com/S2Ler/Networker.git", .branch("master")),
+    .package(url: "https://github.com/S2Ler/Networker.git", .branch("async_await")),
     .package(url: "https://github.com/S2Ler/Preferences.git", .upToNextMinor(from: "0.3.0")),
     .package(url: "https://github.com/apple/swift-argument-parser.git", .upToNextMinor(from: "0.3.0")),
-    .package(url: "https://github.com/apple/swift-se-0282-experimental.git", .branch("master")),
+    .package(url: "https://github.com/S2Ler/swift-httpcookie-codable.git", .upToNextMinor(from: "0.0.1")),
   ],
   targets: [
     .target(
@@ -33,7 +33,12 @@ let package = Package(
         "VaillantMultimaticFoundation",
         .product(name: "Networker", package: "Networker"),
         .product(name: "ArgumentParser", package: "swift-argument-parser"),
-        .product(name: "SE0282_Experimental", package: "swift-se-0282-experimental")
+      ],
+      swiftSettings: [
+        .unsafeFlags([
+          "-Xfrontend",
+          "-enable-experimental-concurrency"
+        ])
       ]
     ),
     .target(
@@ -41,6 +46,12 @@ let package = Package(
       dependencies: [
         "VaillantMultimaticApi",
         "VaillantMultimaticFoundation",
+      ],
+      swiftSettings: [
+        .unsafeFlags([
+          "-Xfrontend",
+          "-enable-experimental-concurrency"
+        ])
       ]
     ),
     .target(
@@ -49,6 +60,13 @@ let package = Package(
         "VaillantMultimaticFoundation",
         .product(name: "Networker", package: "Networker"),
         .product(name: "Preferences", package: "Preferences"),
+        .product(name: "HttpCookieCodable", package: "swift-httpcookie-codable"),
+      ],
+      swiftSettings: [
+        .unsafeFlags([
+          "-Xfrontend",
+          "-enable-experimental-concurrency"
+        ])
       ]
     ),
     .target(
@@ -56,12 +74,24 @@ let package = Package(
       dependencies: [
         .product(name: "Networker", package: "Networker"),
         .product(name: "Preferences", package: "Preferences"),
+      ],
+      swiftSettings: [
+        .unsafeFlags([
+          "-Xfrontend",
+          "-enable-experimental-concurrency"
+        ])
       ]
     ),
     .testTarget(
       name: "VaillantMultimaticApiTests",
       dependencies: [
         "VaillantMultimaticApi",
+      ],
+      swiftSettings: [
+        .unsafeFlags([
+          "-Xfrontend",
+          "-enable-experimental-concurrency"
+        ])
       ]
     )
   ]

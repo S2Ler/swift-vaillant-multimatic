@@ -5,8 +5,8 @@
         "package": "Networker",
         "repositoryURL": "https://github.com/S2Ler/Networker.git",
         "state": {
-          "branch": "master",
-          "revision": "b25f386ba88cf791c36076c8f89bd8f43ec809c5",
+          "branch": "async_await",
+          "revision": "4bda17cc60a1ef2d47991aa1255358e20589b654",
           "version": null
         }
       },
@@ -24,8 +24,17 @@
         "repositoryURL": "https://github.com/apple/swift-argument-parser.git",
         "state": {
           "branch": null,
-          "revision": "15351c1cd009eba0b6e438bfef55ea9847a8dc4a",
-          "version": "0.3.0"
+          "revision": "92646c0cdbaca076c8d3d0207891785b3379cbff",
+          "version": "0.3.1"
+        }
+      },
+      {
+        "package": "swift-httpcookie-codable",
+        "repositoryURL": "https://github.com/S2Ler/swift-httpcookie-codable.git",
+        "state": {
+          "branch": null,
+          "revision": "3f2a391b072ff841b1c2432da7ad2a5995d4e082",
+          "version": "0.0.1"
         }
       },
       {
@@ -35,15 +44,6 @@
           "branch": null,
           "revision": "173f567a2dfec11d74588eea82cecea555bdc0bc",
           "version": "1.4.0"
-        }
-      },
-      {
-        "package": "swift-se-0282-experimental",
-        "repositoryURL": "https://github.com/apple/swift-se-0282-experimental.git",
-        "state": {
-          "branch": "master",
-          "revision": "75b3547c406cd212843e6f0a4db1dd09a62848d3",
-          "version": null
         }
       }
     ]

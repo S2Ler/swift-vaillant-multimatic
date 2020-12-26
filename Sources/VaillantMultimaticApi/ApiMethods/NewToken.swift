@@ -2,12 +2,13 @@ import Foundation
 import Combine
 import Networker
 import VaillantMultimaticFoundation
+import Preferences
 
 public struct NewTokenResponseBody: Decodable {
   public let authToken: VaillantAuthToken
 }
 
-public struct NewTokenRequestParams: Encodable {
+public struct NewTokenRequestParams: Codable {
   public let username: String
   public let password: String
   public let smartphoneId: String
@@ -20,14 +21,10 @@ public struct NewTokenRequestParams: Encodable {
 }
 
 public extension VaillantMultimaticApi {
-  func newToken(_ params: NewTokenRequestParams) -> AnyPublisher<NewTokenResponseBody, Error> {
-    return dispatch(
-      .newToken,
-      body: .json(params),
-      httpMethod: .post,
-      successType: VaillantResponse<NewTokenResponseBody>.self
-    )
-    .map(\.body)
-    .eraseToAnyPublisher()
+  func newToken(_ params: NewTokenRequestParams) async throws -> NewTokenResponseBody {
+    await try dispatch(.newToken,
+                       body: .json(params),
+                       httpMethod: .post,
+                       successType: VaillantResponse<NewTokenResponseBody>.self).body
   }
 }

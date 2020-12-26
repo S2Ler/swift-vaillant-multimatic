@@ -1,14 +1,14 @@
 import Foundation
 import Networker
 
-public struct VaillantFacility: Codable {
+public struct Facility: Codable {
   public struct NetworkInfo: Codable {
     public let macAddressEthernet: String
     public let macAddressWifiAccessPoint: String
     public let macAddressWifiClient: String
   }
 
-  public struct SerialNumber: Codable {
+  public struct SerialNumber: Codable, Equatable {
     public let rawValue: String
 
     public init(_ rawValue: String) {
@@ -35,6 +35,6 @@ public struct VaillantFacility: Codable {
   public let firmwareVersion: String
 }
 
-extension VaillantFacility.SerialNumber: RawRequestValueConvertible {
+extension Facility.SerialNumber: RawRequestValueConvertible {
   public var rawRequestValue: String { rawValue }
 }

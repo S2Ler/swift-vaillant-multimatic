@@ -18,14 +18,7 @@ public struct AuthenticateParams: Encodable {
 }
 
 public extension VaillantMultimaticApi {
-  func authenticate(_ params: AuthenticateParams) -> AnyPublisher<Void, Error> {
-    return dispatch(
-      .authenticate,
-      body: .json(params),
-      httpMethod: .post,
-      successType: EmptyResponse.self
-    )
-    .map { (_) -> Void in }
-    .eraseToAnyPublisher()
+  func authenticate(_ params: AuthenticateParams) async throws {
+    _ = await try dispatch(.authenticate, body: .json(params), httpMethod: .post, successType: EmptyResponse.self)
   }
 }

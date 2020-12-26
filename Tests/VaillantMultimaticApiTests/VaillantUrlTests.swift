@@ -8,8 +8,8 @@ class VaillantUrlTests: XCTestCase {
   func testUrl() {
     assertUrl(.baseAuthenticate,
               "/account/authentication/v1")
-    assertUrl(.facilities(serialNumber: VaillantFacility.SerialNumber("1234")),
-              "/facilities/1234")
+    assertUrl(.facilities(serialNumber: Facility.SerialNumber("1234")),
+              "/facilities/1234/systemcontrol/v1")
   }
 
   private func assertUrl(_ vaillantUrl: VaillantPath, _ expectedAbsoluteString: String) {

@@ -1,6 +1,6 @@
 import Foundation
 
-public struct VaillantFacilityStatus: Codable {
+public struct FacilityStatus: Codable {
   public let datetime: String
   public let outsideTemperature: Double
 

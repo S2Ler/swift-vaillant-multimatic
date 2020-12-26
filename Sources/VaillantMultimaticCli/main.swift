@@ -5,52 +5,35 @@ import Networker
 import Logging
 import Preferences
 import ArgumentParser
-import Combine
-import SE0282_Experimental
 
 var logger = Logger(label: "vaillant-api")
 logger.logLevel = .debug
 
 struct MainCommand: ParsableCommand {
-  private enum CodingKeys: String, CodingKey {
-    case username
-    case password
-  }
   @Argument var username: String
   @Argument var password: String
 
-  private var cancelTokens: [AnyCancellable] = []
-
   mutating func run() throws {
-    let dispatcher = URLSessionDispatcher(
-      jsonBodyEncoder: JSONEncoder(),
-      plugins: [],
-      logger: logger
-    )
-    let api = VaillantMultimaticApi(
-      dispatcher,
-      secureStorage: UserDefaults()
-    )
 
-    let finished = ManagedAtomic<Bool>(false)
+    let dispatcher = URLSessionDispatcher(jsonBodyEncoder: JSONEncoder(),
+                                          plugins: [],
+                                          logger: logger)
+    let api = VaillantMultimaticApi(dispatcher, secureStorage: UserDefaults())
+    let username = self.username
+    let password = self.password
 
-    api
-      .login(.init(username: username, password: password))
-      .flatMap {
-        api.facilitiesList()
+    runAsyncAndBlock {
+      do {
+        await try api.login(.init(username: username, password: password))
+        let facilitiesListResponse = await try api.facilitiesList()
+        let serialNumber = facilitiesListResponse.facilitiesList[0].serialNumber
+        let systemControl = await try api.facilitySystemControl(serialNumber)
+        print(systemControl.zones)
+        print(systemControl.status.outsideTemperature)
       }
-      .map { $0.facilitiesList[0].serialNumber }
-      .flatMap { api.facilitySystemControl($0) }
-      .map(\.status.outsideTemperature)
-      .sink { completion in
-        finished.store(true, ordering: .relaxed)
-      } receiveValue: { (outsideTemperature) in
-        print("Outside temperature: \(outsideTemperature)")
+      catch {
+        print("An eror happened: \(error)")
       }
-      .store(in: &cancelTokens)
-
-    while !finished.load(ordering: .relaxed) {
-      RunLoop.current.run(mode: .common, before: Date().addingTimeInterval(2))
     }
   }
 }

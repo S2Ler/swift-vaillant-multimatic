@@ -6,12 +6,12 @@ public extension URL {
   static let vaillantBase: URL = URL(string: "https://smart.vaillant.com/mobile/api/v4")!
 }
 
-public enum VaillantPath {
+public enum VaillantPath: Equatable {
   case baseAuthenticate
   case authenticate
   case newToken
   case facilitiesList
-  case facilities(serialNumber: VaillantFacility.SerialNumber)
+  case facilities(serialNumber: Facility.SerialNumber)
 
   public var requestPath: RequestPath {
     func combine(_ vaillantPath: VaillantPath, _ requestPath: RequestPath) -> RequestPath {
