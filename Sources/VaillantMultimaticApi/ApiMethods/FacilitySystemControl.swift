@@ -11,7 +11,7 @@ public extension VaillantMultimaticApi {
   func facilitySystemControl(
     _ facilitySerialNumber: Facility.SerialNumber
   ) async throws -> FacilitySystemControlResponseBody {
-    let response = await try dispatch(.facilities(serialNumber: facilitySerialNumber),
+    let response = try await dispatch(.facilities(serialNumber: facilitySerialNumber),
                                       httpMethod: .get,
                                       successType: VaillantResponse<FacilitySystemControlResponseBody>.self)
     return response.body

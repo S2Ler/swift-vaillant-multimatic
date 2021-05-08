@@ -4,7 +4,7 @@ import Combine
 import VaillantMultimaticFoundation
 import Preferences
 
-public final actor class VaillantMultimaticApi {
+public final actor VaillantMultimaticApi {
   private let cookiesKey: PersistCookiesPlugin.CookiesKey
 
   public let dispatcher: Networker.Dispatcher
@@ -25,7 +25,7 @@ public final actor class VaillantMultimaticApi {
 
   public func login(_ params: NewTokenRequestParams) async throws {
     func authenticate(with authToken: VaillantAuthToken) async throws {
-      await try self.authenticate(.init(
+      try await self.authenticate(.init(
         username: params.username,
         smartphoneId: params.smartphoneId,
         authToken: authToken
@@ -34,15 +34,15 @@ public final actor class VaillantMultimaticApi {
 
     loginParams = params
 
-    if restoreCookies() {
+    if restoreCookies() == .restored {
       return
     }
 
     if let authToken = try? secureStorage.get(VaillantAuthToken.Key()) {
-      await try authenticate(with: authToken)
+      try await authenticate(with: authToken)
     }
     else {
-      let authToken = await try newToken(params).authToken
+      let authToken = try await newToken(params).authToken
       do {
         try self.secureStorage.set(authToken, for: VaillantAuthToken.Key())
       }
@@ -50,7 +50,7 @@ public final actor class VaillantMultimaticApi {
         self.dispatcher.logger?.error("Coudln't save VaillantAuthToken to secureStorage: \(error)")
       }
 
-      return await try authenticate(with: authToken)
+      return try await authenticate(with: authToken)
     }
   }
 
@@ -69,7 +69,7 @@ public final actor class VaillantMultimaticApi {
       cachePolicy: .useProtocolCachePolicy
     )
     do {
-      return await try dispatcher.dispatch(request)
+      return try await dispatcher.dispatch(request)
     }
     catch {
       if case VaillantError.statusCodeError(let response) = error,
@@ -78,8 +78,8 @@ public final actor class VaillantMultimaticApi {
          response.statusCode == 401, // invalid auth token. Try to login again.
          let loginParams = loginParams {
         eraseCookies() // Eraze invalid cookies and try again.
-        await try login(loginParams)
-        return await try dispatch(path, body: body, httpMethod: httpMethod, successType: successType)
+        try await login(loginParams)
+        return try await dispatch(path, body: body, httpMethod: httpMethod, successType: successType)
       }
       else {
         throw error
@@ -87,20 +87,24 @@ public final actor class VaillantMultimaticApi {
     }
   }
 
-  private func restoreCookies() -> Bool {
+  private enum RestoreCookiesResult {
+    case restored
+    case notRestored
+  }
+  private func restoreCookies() -> RestoreCookiesResult {
     do {
       guard let cookieContainers = try secureStorage.get(cookiesKey) else {
         dispatcher.logger?.info("Cookies are not restored because they were not saved previously.");
-        return false
+        return .notRestored
       }
       cookieContainers
         .map(\.cookie)
         .forEach { HTTPCookieStorage.shared.setCookie($0) }
-      return true
+      return .restored
     }
     catch {
       dispatcher.logger?.error("Couldn't restore cookies: \(error)")
-      return false
+      return .notRestored
     }
   }
 

@@ -6,14 +6,14 @@ import Logging
 import Preferences
 import ArgumentParser
 
-var logger = Logger(label: "vaillant-api")
-logger.logLevel = .debug
-
+@main
 struct MainCommand: ParsableCommand {
   @Argument var username: String
   @Argument var password: String
 
-  mutating func run() throws {
+  mutating func run() async throws {
+    var logger = Logger(label: "vaillant-api")
+    logger.logLevel = .debug
 
     let dispatcher = URLSessionDispatcher(jsonBodyEncoder: JSONEncoder(),
                                           plugins: [],
@@ -22,21 +22,16 @@ struct MainCommand: ParsableCommand {
     let username = self.username
     let password = self.password
 
-    runAsyncAndBlock {
-      do {
-        await try api.login(.init(username: username, password: password))
-        let facilitiesListResponse = await try api.facilitiesList()
-        let serialNumber = facilitiesListResponse.facilitiesList[0].serialNumber
-        let systemControl = await try api.facilitySystemControl(serialNumber)
-        print(systemControl.zones)
-        print(systemControl.status.outsideTemperature)
-      }
-      catch {
-        print("An eror happened: \(error)")
-      }
+    do {
+      try await api.login(.init(username: username, password: password))
+      let facilitiesListResponse = try await api.facilitiesList()
+      let serialNumber = facilitiesListResponse.facilitiesList[0].serialNumber
+      let systemControl = try await api.facilitySystemControl(serialNumber)
+      print(systemControl.zones)
+      print(systemControl.status.outsideTemperature)
+    }
+    catch {
+      print("An eror happened: \(error)")
     }
   }
 }
-
-MainCommand.main()
-

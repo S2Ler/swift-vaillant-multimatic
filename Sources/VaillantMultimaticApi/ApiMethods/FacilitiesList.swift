@@ -8,7 +8,7 @@ public struct FacilitiesListResponseBody: Decodable {
 
 public extension VaillantMultimaticApi {
   func facilitiesList() async throws -> FacilitiesListResponseBody {
-    let response = await try dispatch(.facilitiesList,
+    let response = try await dispatch(.facilitiesList,
                                       httpMethod: .get,
                                       successType: VaillantResponse<FacilitiesListResponseBody>.self)
     return response.body

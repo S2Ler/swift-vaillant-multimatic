@@ -22,7 +22,7 @@ public struct NewTokenRequestParams: Codable {
 
 public extension VaillantMultimaticApi {
   func newToken(_ params: NewTokenRequestParams) async throws -> NewTokenResponseBody {
-    await try dispatch(.newToken,
+    try await dispatch(.newToken,
                        body: .json(params),
                        httpMethod: .post,
                        successType: VaillantResponse<NewTokenResponseBody>.self).body
